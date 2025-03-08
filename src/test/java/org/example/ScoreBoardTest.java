@@ -136,4 +136,21 @@ class ScoreBoardTest {
             () -> scoreBoard.updateGameScore(game, newHomeTeamScore, newAwayTeamScore));
     assertEquals("Cannot update score of not active game", ex.getMessage());
   }
+
+  @Test
+  void gamesSummary_shouldReturnGamesResultsOrderedByTotalScore() {
+    // given
+    Game game1 = new Game(1, 0, "Poland", "Germany");
+    Game game2 = new Game(3, 2, "France", "Italy");
+    registeredGames.add(game1);
+    registeredGames.add(game2);
+    
+    // when
+    List<String> gamesSummary = scoreBoard.getGamesSummary();
+
+    // then
+    assertEquals(2, gamesSummary.size());
+    assertEquals("France 3 - Italy 2", gamesSummary.getFirst());
+    assertEquals("Poland 1 - Germany 0", gamesSummary.getLast());
+  }
 }
