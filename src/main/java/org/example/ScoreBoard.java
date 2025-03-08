@@ -40,7 +40,18 @@ public class ScoreBoard {
   }
 
   public void updateGameScore(Game game, int newHomeTeamScore, int newAwayTeamScore) {
-    game.setHomeTeamScore(newHomeTeamScore);
-    game.setAwayTeamScore(newAwayTeamScore);
+    // validate numbers
+    if (newHomeTeamScore < 0 || newAwayTeamScore < 0) {
+      throw new IllegalArgumentException("At least one of the provided parameters is negative number. " +
+              "Game will not be updated");
+    }
+
+    // validate game state
+    if (activeGames.contains(game)) {
+      game.setHomeTeamScore(newHomeTeamScore);
+      game.setAwayTeamScore(newAwayTeamScore);
+    } else {
+      throw new IllegalStateException("Cannot update score of not active game");
+    }
   }
 }
