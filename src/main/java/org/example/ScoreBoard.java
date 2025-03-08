@@ -30,4 +30,8 @@ public class ScoreBoard {
         registeredGames.add(game);
         activeGames.add(game);
     }
+
+    public void finishGame(Game game) {
+        activeGames.remove(game);
+    }
 }
