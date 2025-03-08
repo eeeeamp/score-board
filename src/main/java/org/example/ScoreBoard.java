@@ -58,7 +58,10 @@ public class ScoreBoard {
 
   public List<String> getGamesSummary() {
     return registeredGames.stream()
-        .sorted(Comparator.comparing((Game game) -> game.getHomeTeamScore() + game.getAwayTeamScore()).reversed())
+        .filter(game -> game.getHomeTeamScore() != null && game.getAwayTeamScore() != null)
+        .sorted(Comparator.comparingInt((Game game) -> game.getHomeTeamScore() + game.getAwayTeamScore())
+                .reversed()
+                .thenComparing(Game::getRegistrationTime, Comparator.reverseOrder()))
         .map(this::formatGameResult)
         .toList();
   }

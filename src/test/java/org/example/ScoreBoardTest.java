@@ -169,7 +169,7 @@ class ScoreBoardTest {
     // then
     assertEquals(2, gamesSummary.size());
     assertEquals("France 3 - Italy 2", gamesSummary.getFirst());
-    assertEquals("Poland 1 - Germany 0", gamesSummary.getLast());
+    assertEquals("Poland 4 - Germany 1", gamesSummary.getLast());
   }
 
   @Test
@@ -185,6 +185,6 @@ class ScoreBoardTest {
 
     // then
     assertEquals(1, gamesSummary.size());
-    assertEquals("Poland 1 - Germany 0", gamesSummary.getFirst());
+    assertEquals("Poland 4 - Germany 1", gamesSummary.getFirst());
   }
 }
