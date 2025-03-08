@@ -144,7 +144,7 @@ class ScoreBoardTest {
     Game game2 = new Game(3, 2, "France", "Italy");
     registeredGames.add(game1);
     registeredGames.add(game2);
-    
+
     // when
     List<String> gamesSummary = scoreBoard.getGamesSummary();
 

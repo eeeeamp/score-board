@@ -3,6 +3,7 @@ package org.example;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -53,5 +54,24 @@ public class ScoreBoard {
     } else {
       throw new IllegalStateException("Cannot update score of not active game");
     }
+  }
+
+  public List<String> getGamesSummary() {
+    return registeredGames.stream()
+        .sorted(Comparator.comparing((Game game) -> game.getHomeTeamScore() + game.getAwayTeamScore()).reversed())
+        .map(this::formatGameResult)
+        .toList();
+  }
+
+  private String formatGameResult(Game game) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(game.getHomeTeamName())
+        .append(" ")
+        .append(game.getHomeTeamScore())
+        .append(" - ")
+        .append(game.getAwayTeamName())
+        .append(" ")
+        .append(game.getAwayTeamScore());
+    return sb.toString();
   }
 }
