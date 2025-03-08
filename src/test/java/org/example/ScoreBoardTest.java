@@ -60,4 +60,17 @@ class ScoreBoardTest {
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> scoreBoard.startGame(game));
         assertEquals("Cannot start already finished game", ex.getMessage());
     }
+
+    @Test
+    void finishGame_shouldRemoveGameFromActiveGames() {
+        // given
+        Game game = new Game();
+        activeGames.add(game);
+
+        // when
+        scoreBoard.finishGame(game);
+
+        // then
+        assertFalse(activeGames.contains(game));
+    }
 }
