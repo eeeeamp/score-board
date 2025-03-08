@@ -38,4 +38,9 @@ public class ScoreBoard {
       throw new IllegalStateException("Cannot finish not active game");
     }
   }
+
+  public void updateGameScore(Game game, int newHomeTeamScore, int newAwayTeamScore) {
+    game.setHomeTeamScore(newHomeTeamScore);
+    game.setAwayTeamScore(newAwayTeamScore);
+  }
 }

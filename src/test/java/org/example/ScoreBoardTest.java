@@ -91,18 +91,18 @@ class ScoreBoardTest {
 
   @Test
   void should_updateGameScore() {
-      // given
-      Game game = new Game();
-      game.setHomeTeamScore(2);
-      game.setAwayTeamScore(4);
-      int newHomeTeamScore = 3;
-      int newAwayTeamScore = 4;
+    // given
+    Game game = new Game();
+    game.setHomeTeamScore(2);
+    game.setAwayTeamScore(4);
+    int newHomeTeamScore = 3;
+    int newAwayTeamScore = 4;
 
-      // when
-      scoreBoard.updateGameScore(game, newHomeTeamScore, newAwayTeamScore);
+    // when
+    scoreBoard.updateGameScore(game, newHomeTeamScore, newAwayTeamScore);
 
-      // then
-      assertEquals(newHomeTeamScore, game.getHomeTeamScore());
-      assertEquals(newAwayTeamScore, game.getAwayTeamScore());
+    // then
+    assertEquals(newHomeTeamScore, game.getHomeTeamScore());
+    assertEquals(newAwayTeamScore, game.getAwayTeamScore());
   }
 }
