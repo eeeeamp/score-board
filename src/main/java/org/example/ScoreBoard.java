@@ -15,55 +15,81 @@ public class ScoreBoard {
   private Set<Game> activeGames;
 
   public void startGame(Game game) {
-    // validations
-    if (activeGames.contains(game)) {
-      throw new IllegalStateException("Cannot start already active game");
-    }
-    if (registeredGames.contains(game)) {
-      throw new IllegalStateException("Cannot start already finished game");
-    }
+    validateGameIsNotActive(game);
+    validateGameIsRegistered(game);
 
-    // initialize score
-    game.setHomeTeamScore(0);
-    game.setAwayTeamScore(0);
+    initializeGame(game);
 
-    // register game in tracking systems
     registeredGames.add(game);
     activeGames.add(game);
   }
 
   public void finishGame(Game game) {
-    if (activeGames.contains(game)) {
-      activeGames.remove(game);
-    } else {
-      throw new IllegalStateException("Cannot finish not active game");
-    }
+    validateGameCanBeFinished(game);
+    activeGames.remove(game);
   }
 
   public void updateGameScore(Game game, int newHomeTeamScore, int newAwayTeamScore) {
-    // validate numbers
-    if (newHomeTeamScore < 0 || newAwayTeamScore < 0) {
-      throw new IllegalArgumentException("At least one of the provided parameters is negative number. " +
-              "Game will not be updated");
-    }
+    validateProvidedScoresAreCorrect(newHomeTeamScore, newAwayTeamScore);
+    validateGameScoreCanBeUpdated(game);
 
-    // validate game state
-    if (activeGames.contains(game)) {
-      game.setHomeTeamScore(newHomeTeamScore);
-      game.setAwayTeamScore(newAwayTeamScore);
-    } else {
-      throw new IllegalStateException("Cannot update score of not active game");
-    }
+    game.setHomeTeamScore(newHomeTeamScore);
+    game.setAwayTeamScore(newAwayTeamScore);
   }
 
   public List<String> getGamesSummary() {
     return registeredGames.stream()
-        .filter(game -> game.getHomeTeamScore() != null && game.getAwayTeamScore() != null)
-        .sorted(Comparator.comparingInt((Game game) -> game.getHomeTeamScore() + game.getAwayTeamScore())
-                .reversed()
+        .filter(ScoreBoard::isScoreInitialized)
+        .sorted(Comparator.comparingInt(ScoreBoard::calculateTotalScore).reversed()
                 .thenComparing(Game::getRegistrationTime, Comparator.reverseOrder()))
         .map(this::formatGameResult)
         .toList();
+  }
+
+  private void validateGameIsRegistered(Game game) {
+    if (registeredGames.contains(game)) {
+      throw new IllegalStateException("Cannot start already finished game");
+    }
+  }
+
+  private void validateGameIsNotActive(Game game) {
+    if (activeGames.contains(game)) {
+      throw new IllegalStateException("Cannot start already active game");
+    }
+  }
+
+  private void validateGameCanBeFinished(Game game) {
+    validateGameIsNotActive(game, "Cannot finish not active game");
+  }
+
+  private void validateGameScoreCanBeUpdated(Game game) {
+    validateGameIsNotActive(game, "Cannot update score of not active game");
+  }
+
+  private void validateGameIsNotActive(Game game, String errorMessage) {
+    if (!activeGames.contains(game)) {
+      throw new IllegalStateException(errorMessage);
+    }
+  }
+
+  private static void validateProvidedScoresAreCorrect(int newHomeTeamScore, int newAwayTeamScore) {
+    if (newHomeTeamScore < 0 || newAwayTeamScore < 0) {
+      throw new IllegalArgumentException("At least one of the provided parameters is negative number. " +
+              "Game will not be updated");
+    }
+  }
+
+  private static void initializeGame(Game game) {
+    game.setHomeTeamScore(0);
+    game.setAwayTeamScore(0);
+  }
+
+  private static int calculateTotalScore(Game game) {
+    return game.getHomeTeamScore() + game.getAwayTeamScore();
+  }
+
+  private static boolean isScoreInitialized(Game game) {
+    return game.getHomeTeamScore() != null && game.getAwayTeamScore() != null;
   }
 
   private String formatGameResult(Game game) {
