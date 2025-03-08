@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -140,8 +141,8 @@ class ScoreBoardTest {
   @Test
   void gamesSummary_shouldReturnGamesResultsOrderedByTotalScore() {
     // given
-    Game game1 = new Game(1, 0, "Poland", "Germany");
-    Game game2 = new Game(3, 2, "France", "Italy");
+    Game game1 = new Game(1, 0, "Poland", "Germany", LocalDateTime.now().minusHours(1));
+    Game game2 = new Game(3, 2, "France", "Italy", LocalDateTime.now());
     registeredGames.add(game1);
     registeredGames.add(game2);
 
@@ -152,5 +153,38 @@ class ScoreBoardTest {
     assertEquals(2, gamesSummary.size());
     assertEquals("France 3 - Italy 2", gamesSummary.getFirst());
     assertEquals("Poland 1 - Germany 0", gamesSummary.getLast());
+  }
+
+  @Test
+  void gamesSummary_shouldOrderGamesByRegisteredTime_whenTotalScoreIsTheSame() {
+    // given
+    Game game1 = new Game(4, 1, "Poland", "Germany", LocalDateTime.now().minusHours(2));
+    Game game2 = new Game(3, 2, "France", "Italy", LocalDateTime.now());
+    registeredGames.add(game1);
+    registeredGames.add(game2);
+
+    // when
+    List<String> gamesSummary = scoreBoard.getGamesSummary();
+
+    // then
+    assertEquals(2, gamesSummary.size());
+    assertEquals("France 3 - Italy 2", gamesSummary.getFirst());
+    assertEquals("Poland 1 - Germany 0", gamesSummary.getLast());
+  }
+
+  @Test
+  void gamesSummary_shouldRemoveNotStartedGames() {
+    // given
+    Game game1 = new Game();
+    Game game2 = new Game(4, 1, "Poland", "Germany", LocalDateTime.now().minusHours(2));
+    registeredGames.add(game1);
+    registeredGames.add(game2);
+
+    // when
+    List<String> gamesSummary = scoreBoard.getGamesSummary();
+
+    // then
+    assertEquals(1, gamesSummary.size());
+    assertEquals("Poland 1 - Germany 0", gamesSummary.getFirst());
   }
 }

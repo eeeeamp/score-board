@@ -2,6 +2,8 @@ package org.example;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -13,4 +15,5 @@ public class Game {
   private Integer awayTeamScore;
   private String homeTeamName;
   private String awayTeamName;
+  private LocalDateTime registrationTime;
 }
