@@ -1,15 +1,32 @@
 package org.example;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ScoreBoardTest {
 
+    private List<Game> registeredGames;
+    private Set<Game> activeGames;
+    private ScoreBoard scoreBoard;
+
+    @BeforeEach
+    void setUp() {
+        registeredGames = new ArrayList<>();
+        activeGames = new HashSet<>();
+        scoreBoard = new ScoreBoard(registeredGames, activeGames);
+    }
+
     @Test
-    void startGame_shouldInitializeScore() {
+    void startGame_shouldInitializeScore_andAddGameToRegisteredAndAllGames() {
         // given
-        ScoreBoard scoreBoard = new ScoreBoard();
+        scoreBoard = new ScoreBoard(registeredGames, activeGames);
         Game game = new Game();
 
         // when
@@ -18,5 +35,29 @@ class ScoreBoardTest {
         // then
         assertEquals(0, game.getHomeTeamScore());
         assertEquals(0, game.getAwayTeamScore());
+        assertTrue(registeredGames.contains(game));
+        assertTrue(activeGames.contains(game));
+    }
+
+    @Test
+    void startGame_shouldNotAllowInitializationOfActiveGame() {
+        // given
+        Game game = new Game();
+        activeGames.add(game);
+
+        // when & then
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> scoreBoard.startGame(game));
+        assertEquals("Cannot start already active game", ex.getMessage());
+    }
+
+    @Test
+    void startGame_shouldNotAllowInitializationOfAlreadyRegisteredGame() {
+        // given
+        Game game = new Game();
+        registeredGames.add(game);
+
+        // when & then
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> scoreBoard.startGame(game));
+        assertEquals("Cannot start already finished game", ex.getMessage());
     }
 }
