@@ -2,6 +2,8 @@ package org.example;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -95,6 +97,8 @@ class ScoreBoardTest {
     Game game = new Game();
     game.setHomeTeamScore(2);
     game.setAwayTeamScore(4);
+    activeGames.add(game);
+
     int newHomeTeamScore = 3;
     int newAwayTeamScore = 4;
 
@@ -104,5 +108,32 @@ class ScoreBoardTest {
     // then
     assertEquals(newHomeTeamScore, game.getHomeTeamScore());
     assertEquals(newAwayTeamScore, game.getAwayTeamScore());
+  }
+
+  @ParameterizedTest(name = "Test for negative numbers validation with home score {0} and away score {1}")
+  @CsvSource({"-1, 0", "0, -1", "-1, -1"})
+  void updateGameScore_shouldNotAllowProvidingNegativeNumbers(int newHomeTeamScore, int newAwayTeamScore) {
+    // given
+    Game game = new Game();
+    activeGames.add(game);
+
+    // when & then
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> scoreBoard.updateGameScore(game, newHomeTeamScore, newAwayTeamScore));
+    assertEquals("At least one of the provided parameters is negative number. Game will not be updated",
+        ex.getMessage());
+  }
+
+  @Test
+  void updateGameScore_shouldNotAllowToUpdateScoreOfNotActiveGame() {
+    // given
+    Game game = new Game();
+    int newHomeTeamScore = 3;
+    int newAwayTeamScore = 4;
+
+    // when & then
+    IllegalStateException ex = assertThrows(IllegalStateException.class,
+            () -> scoreBoard.updateGameScore(game, newHomeTeamScore, newAwayTeamScore));
+    assertEquals("Cannot update score of not active game", ex.getMessage());
   }
 }
