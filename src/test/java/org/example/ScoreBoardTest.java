@@ -62,15 +62,27 @@ class ScoreBoardTest {
     }
 
     @Test
-    void finishGame_shouldRemoveGameFromActiveGames() {
+    void finishGame_shouldRemoveGameFromActiveGames_butNotFromRegisteredGames() {
         // given
         Game game = new Game();
         activeGames.add(game);
+        registeredGames.add(game);
 
         // when
         scoreBoard.finishGame(game);
 
         // then
         assertFalse(activeGames.contains(game));
+        assertTrue(registeredGames.contains(game));
+    }
+
+    @Test
+    void finishGame_shouldNotAllowToRemoveNotActiveGame() {
+        // given
+        Game game = new Game();
+
+        // when & then
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> scoreBoard.finishGame(game));
+        assertEquals("Cannot finish not active game", ex.getMessage());
     }
 }
